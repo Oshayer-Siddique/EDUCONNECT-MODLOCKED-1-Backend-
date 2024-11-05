@@ -32,4 +32,4 @@ const userController = require('../controllers/userController');
 user_route.get('/register', userController.registerLoad);
 user_route.post('/register', upload.single('image'), userController.register);
 
-module.exports = user.route;
+module.exports = user_route;
