@@ -10,7 +10,7 @@ async function getAllDepartments(req, res) {
     }
 }
 
-
+//create dept
 function createDepartment (req,res){
     const sql = 'INSERT INTO department SET ?';
     const newDepartment = { name: req.body.name };
@@ -21,20 +21,47 @@ function createDepartment (req,res){
 
 }
 
-
-async function getDepartmentByName  (req, res) {
-    const sql = 'SELECT * FROM department WHERE department_name = ?';
-    db.query(sql, [req.params.name], (err, result) => {
+//get by dept ID
+async function getDepartmentById  (req, res) {
+    const sql = 'SELECT * FROM department WHERE department_id = ?';
+    db.query(sql, [req.params.id], (err, result) => {
         if (err) throw err;
         res.json(result);
     });
 };
 
 
+
+// Update a department
+async function updateDepartment(req, res){
+    const updatedDepartment = { name: req.body.name };
+    const sql = 'UPDATE department SET ? WHERE department_id = ?';
+    db.query(sql, [updatedDepartment, req.params.id], (err, result) => {
+        if (err) throw err;
+        res.json({ message: 'Department updated successfully' });
+    });
+};
+
+
+// Delete a department
+async function deleteDepartment(req, res){
+    const sql = 'DELETE FROM department WHERE department_id = ?';
+    db.query(sql, [req.params.id], (err, result) => {
+        if (err) throw err;
+        res.json({ message: 'Department deleted successfully' });
+    });
+};
+
+
+
+
+
 module.exports = { 
     getAllDepartments,
     createDepartment,
-    getDepartmentByName,
+    getDepartmentById,
+    updateDepartment,
+    deleteDepartment,
 
 
 
