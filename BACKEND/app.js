@@ -4,6 +4,9 @@ const bodyParser = require('body-parser');
 const db = require('./Admin/Config/db');
 const departmentRoutes = require('./Admin/Routes/departmentRoutes');
 const courseRoutes = require('./Admin/Routes/courseRoutes');
+const studentRoutes = require('./Admin/Routes/studentRoutes');
+
+// const a = require('./Admin/Routes/studentRoutes');
 const port = 8000;
 
 
@@ -20,6 +23,8 @@ app.get("/", (req, res) => {
 
 app.use('/departments',departmentRoutes);
 app.use('/courses',courseRoutes);
+app.use('/students',studentRoutes);
+
 
 
 

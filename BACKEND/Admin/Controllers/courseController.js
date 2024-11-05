@@ -78,7 +78,7 @@ async function deleteCourse(req, res){
     const sql = 'DELETE FROM course WHERE course_id = ?';
     db.query(sql, [req.params.id], (err, result) => {
         if (err) throw err;
-        res.json({ message: 'Department deleted successfully' });
+        res.json({ message: 'Course deleted successfully' });
     });
 };
 
