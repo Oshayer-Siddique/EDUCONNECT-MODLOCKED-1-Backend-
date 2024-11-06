@@ -33,3 +33,26 @@ exports.notifyAllEnrolledStudents = async (courseId, message) => {
         throw new Error('Failed to send notifications to students');
     }
 };
+
+
+// Get all notifications for a specific student
+exports.getNotificationsForStudent = async (req, res) => {
+    const studentId = req.params.studentId;
+
+    try {
+        const [results] = await db.promise().query(
+            'SELECT * FROM notifications WHERE student_id = ? ORDER BY created_at DESC',
+            [studentId]
+        );
+
+        if (results.length === 0) {
+            res.json({ message: 'No notifications found for this student.' });
+        } else {
+            res.json(results);
+        }
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
+        res.status(500).json({ error: 'Error fetching notifications' });
+    }
+};
+

@@ -1,27 +1,69 @@
-const db = require('../Config/db')
+const db = require('../Config/db');
+const multer = require('multer');
+const path = require('path');
 const notificationController = require('./notificationController');
 
 
-// Create a new assignment and notify all enrolled students in the course
-exports.createAssignment = async (req, res) => {
-    const { course_id, title, description, due_date, max_points } = req.body;
+// Configure Multer for file upload
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/'); // Define the upload directory
+    },
+    filename: (req, file, cb) => {
+        
+        cb(null, path.extname(file.originalname)); // Define unique file name
+    }
+});
+const upload = multer({ storage: storage });
 
+// Export upload middleware to use in routes
+exports.upload = upload;
+
+// Create a new assignment and notify all enrolled students in the course
+
+exports.createAssignment = async (req, res) => {
+    const { title, description, due_date, max_points, course_id } = req.body;
+    const file = req.file;
+
+    // Parse the data into the correct types
+    const parsedCourseId = parseInt(course_id, 10);  // Convert course_id to a number
+    const parsedMaxPoints = parseInt(max_points, 10);  // Convert max_points to a number
+    const parsedDueDate = new Date(due_date);  // Convert due_date to a Date object
+
+    if (isNaN(parsedCourseId)) {
+        return res.status(400).json({ error: 'Course ID must be a valid number.' });
+    }
+    
+    if (isNaN(parsedMaxPoints)) {
+        return res.status(400).json({ error: 'Max points must be a valid number.' });
+    }
+    
+    if (isNaN(parsedDueDate.getTime())) {
+        return res.status(400).json({ error: 'Due date must be a valid date (YYYY-MM-DD HH:MM:SS).' });
+    }
     try {
-        // Step 1: Insert the assignment into the database
+        // Insert the assignment into the database
         const [result] = await db.promise().query(
-            'INSERT INTO assignment (course_id, title, description, due_date, max_points) VALUES (?, ?, ?, ?, ?)',
-            [course_id, title, description, due_date, max_points]
+            'INSERT INTO assignment (course_id, title, description, due_date, max_points, file_path) VALUES (?, ?, ?, ?, ?, ?)',
+            [
+                parsedCourseId,
+                title,
+                description,
+                parsedDueDate,  // Make sure it's inserted as a DATETIME
+                parsedMaxPoints,
+                file ? file.path : null // Save the file path or null if no file uploaded
+            ]
         );
 
-        // Step 2: Notify all students enrolled in the course
+        // Notify students enrolled in the course (optional step)
         const assignmentId = result.insertId;
         const message = `New assignment created: ${title}`;
-        const notificationResults = await notificationController.notifyAllEnrolledStudents(course_id, message);
+        await notificationController.notifyAllEnrolledStudents(parsedCourseId, message);
 
         res.json({
             message: 'Assignment created and notifications sent.',
             assignmentId: assignmentId,
-            notificationResults: notificationResults // To check if all notifications were successfully sent
+            filePath: file ? file.path : null
         });
     } catch (error) {
         console.error('Error creating assignment:', error);
@@ -32,23 +74,5 @@ exports.createAssignment = async (req, res) => {
 
 
 
-// Get all notifications for a specific student
-exports.getNotificationsForStudent = async (req, res) => {
-    const studentId = req.params.studentId;
 
-    try {
-        const [results] = await db.promise().query(
-            'SELECT * FROM notifications WHERE student_id = ? ORDER BY created_at DESC',
-            [studentId]
-        );
 
-        if (results.length === 0) {
-            res.json({ message: 'No notifications found for this student.' });
-        } else {
-            res.json(results);
-        }
-    } catch (error) {
-        console.error('Error fetching notifications:', error);
-        res.status(500).json({ error: 'Error fetching notifications' });
-    }
-};

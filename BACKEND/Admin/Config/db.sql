@@ -82,6 +82,9 @@ CREATE TABLE assignment (
     FOREIGN KEY (course_id) REFERENCES course(course_id) ON DELETE CASCADE
 );
 
+ALTER TABLE assignment ADD COLUMN file_path VARCHAR(255);
+
+
 -- Submission table
 CREATE TABLE submission (
     submission_id BIGINT PRIMARY KEY AUTO_INCREMENT,
