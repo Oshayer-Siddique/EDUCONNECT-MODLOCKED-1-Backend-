@@ -5,6 +5,10 @@ const db = require('./Admin/Config/db');
 const departmentRoutes = require('./Admin/Routes/departmentRoutes');
 const courseRoutes = require('./Admin/Routes/courseRoutes');
 const studentRoutes = require('./Admin/Routes/studentRoutes');
+const studentEnrollRoutes = require('./Admin/Routes/studentEnrollRoutes');
+const teacherAssignRoutes = require('./Admin/Routes/teacherAssignRoutes');
+const assignmentRoutes = require('./Admin/Routes/assignmentRoutes');
+
 
 // const a = require('./Admin/Routes/studentRoutes');
 const port = 8000;
@@ -24,6 +28,12 @@ app.get("/", (req, res) => {
 app.use('/departments',departmentRoutes);
 app.use('/courses',courseRoutes);
 app.use('/students',studentRoutes);
+app.use('/studentenroll',studentEnrollRoutes);
+app.use('/teacherassign',teacherAssignRoutes);
+app.use('/assignment',assignmentRoutes);
+
+
+
 
 
 
