@@ -20,7 +20,7 @@ const register = async(req,res)=>{
             image: 'images/'+req.file.filename,
             password: passwordHash 
 
-        })
+        });
 
         await user.save();
 
