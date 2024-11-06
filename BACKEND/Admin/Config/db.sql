@@ -104,4 +104,19 @@ CREATE TABLE announcement (
 );
 
 
+--notification table
+
+
+CREATE TABLE notifications (
+    notification_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    student_id BIGINT,
+    course_id BIGINT,  -- Match this data type with course(course_id)
+    message TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES student(student_id),
+    FOREIGN KEY (course_id) REFERENCES course(course_id)
+);
+
+
+
 
