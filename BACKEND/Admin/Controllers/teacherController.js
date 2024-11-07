@@ -12,35 +12,51 @@ async function getAllTeachers(req, res) {
 }
 
 // Create a new teacher
+// Create a new teacher
 async function createTeacher(req, res) {
-    const sql = 'INSERT INTO teacher (department_id, name, email, password) VALUES (?, ?, ?, ?)';
-    const { department_id, name, email, password } = req.body;
+    const sql = `
+        INSERT INTO teacher (teacher_id, department_id, name, email, password, date_of_birth, blood_group, department_name, address, phone_number)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    const {
+        teacher_id,
+        department_id,
+        name,
+        email,
+        password,
+        date_of_birth,
+        blood_group,
+        department_name,
+        address,
+        phone_number
+    } = req.body;
 
-    // Validate input
-    if (!department_id || !name || !email || !password) {
-        return res.status(400).json({ message: 'Department ID, name, email, and password are required.' });
+    // Validate required input fields
+    if (!teacher_id || !department_id || !name || !email || !password) {
+        return res.status(400).json({ message: 'Teacher ID, department ID, name, email, and password are required.' });
     }
 
-    // Check if the email is already taken
-    db.query('SELECT * FROM teacher WHERE email = ?', [email], (err, results) => {
+    // Check if the email or teacher_id is already taken
+    db.query('SELECT * FROM teacher WHERE email = ? OR teacher_id = ?', [email, teacher_id], (err, results) => {
         if (err) {
-            console.error('Error checking email:', err);
+            console.error('Error checking email or teacher ID:', err);
             return res.status(500).json({ message: 'Internal server error.' });
         }
         if (results.length > 0) {
-            return res.status(400).json({ message: 'Email already exists.' });
+            return res.status(400).json({ message: 'Email or Teacher ID already exists.' });
         }
 
-        // Proceed to insert the new teacher
-        db.query(sql, [department_id, name, email, password], (err, result) => {
+        // Proceed to insert the new teacher with teacher_id and additional fields
+        db.query(sql, [teacher_id, department_id, name, email, password, date_of_birth, blood_group, department_name, address, phone_number], (err, result) => {
             if (err) {
                 console.error('Error inserting teacher:', err);
                 return res.status(500).json({ message: 'Internal server error.' });
             }
-            res.status(201).json({ id: result.insertId, department_id, name, email });
+            res.status(201).json({ id: teacher_id, department_id, name, email });
         });
     });
 }
+
 
 // Get a teacher by ID
 async function getTeacherById(req, res) {
@@ -58,21 +74,39 @@ async function getTeacherById(req, res) {
 }
 
 // Update a teacher
+// Update a teacher
 async function updateTeacher(req, res) {
-    const { teacher_id, department_id, name, email, password } = req.body;
+    const {
+        teacher_id,
+        department_id,
+        name,
+        email,
+        password,
+        date_of_birth,
+        blood_group,
+        department_name,
+        address,
+        phone_number
+    } = req.body;
     const currentTeacherId = req.params.id; // The original teacher ID from the URL parameters
 
     // Validate input
-    if (!name && !email && !password && !teacher_id && !department_id) {
-        return res.status(400).json({ message: 'At least one field (name, email, password, teacher_id, department_id) must be provided for update.' });
+    if (!teacher_id && !department_id && !name && !email && !password && !date_of_birth && !blood_group && !department_name && !address && !phone_number) {
+        return res.status(400).json({ message: 'At least one field (teacher_id, department_id, name, email, password, etc.) must be provided for update.' });
     }
 
     // Build the update object dynamically
     const updatedTeacher = {};
+    if (teacher_id) updatedTeacher.teacher_id = teacher_id;
+    if (department_id) updatedTeacher.department_id = department_id;
     if (name) updatedTeacher.name = name;
     if (email) updatedTeacher.email = email;
     if (password) updatedTeacher.password = password;
-    if (department_id) updatedTeacher.department_id = department_id;
+    if (date_of_birth) updatedTeacher.date_of_birth = date_of_birth;
+    if (blood_group) updatedTeacher.blood_group = blood_group;
+    if (department_name) updatedTeacher.department_name = department_name;
+    if (address) updatedTeacher.address = address;
+    if (phone_number) updatedTeacher.phone_number = phone_number;
 
     // Check if changing the teacher_id and if it already exists
     if (teacher_id && teacher_id !== currentTeacherId) {

@@ -4,8 +4,10 @@ USE school_management;
 
 -- Department table
 CREATE TABLE department (
-    department_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL
+    department_id BIGINT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    location TEXT,
+    dept_email VARCHAR(255) UNIQUE NOT NULL
 );
 
 -- Department Admin table
@@ -28,26 +30,37 @@ CREATE TABLE admin (
 
 -- Teacher table
 CREATE TABLE teacher (
-    teacher_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    teacher_id BIGINT PRIMARY KEY,
     department_id BIGINT,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
+    date_of_birth DATE,
+    blood_group VARCHAR(3),
+    department_name VARCHAR(100),
+    address TEXT,
+    phone_number VARCHAR(15),
     FOREIGN KEY (department_id) REFERENCES department(department_id) ON DELETE SET NULL
 );
-
 -- Student table
 CREATE TABLE student (
-    student_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    student_id BIGINT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL
+    password VARCHAR(255) NOT NULL,
+    address TEXT,
+    date_of_birth DATE,
+    department VARCHAR(100),
+    phone_number VARCHAR(15),
+    blood_group VARCHAR(3)
 );
+
 
 -- Course table
 CREATE TABLE course (
-    course_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    course_id BIGINT PRIMARY KEY,
     department_id BIGINT,
+    course_department VARCHAR(255),  -- New column for department name
     title VARCHAR(255) NOT NULL,
     description TEXT,
     FOREIGN KEY (department_id) REFERENCES department(department_id) ON DELETE SET NULL

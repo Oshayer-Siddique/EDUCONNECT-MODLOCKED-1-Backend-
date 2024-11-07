@@ -11,31 +11,34 @@ async function getAllStudents(req, res) {
 }
 
 async function createStudent(req, res) {
-    const sql = 'INSERT INTO student (name, email, password) VALUES (?, ?, ?)';
-    const { name, email, password } = req.body;
+    const sql = `
+        INSERT INTO student (student_id, name, email, password, address, date_of_birth, department, phone_number, blood_group)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    const { student_id, name, email, password, address, date_of_birth, department, phone_number, blood_group } = req.body;
 
-    // Validate input
-    if (!name || !email || !password) {
-        return res.status(400).json({ message: 'Name, email, and password are required.' });
+    // Validate required input fields
+    if (!student_id || !name || !email || !password) {
+        return res.status(400).json({ message: 'Student ID, name, email, and password are required.' });
     }
 
-    // Check if the email is already taken
-    db.query('SELECT * FROM student WHERE email = ?', [email], (err, results) => {
+    // Check if the email or student_id is already taken
+    db.query('SELECT * FROM student WHERE email = ? OR student_id = ?', [email, student_id], (err, results) => {
         if (err) {
-            console.error('Error checking email:', err);
+            console.error('Error checking email or student ID:', err);
             return res.status(500).json({ message: 'Internal server error.' });
         }
         if (results.length > 0) {
-            return res.status(400).json({ message: 'Email already exists.' });
+            return res.status(400).json({ message: 'Email or Student ID already exists.' });
         }
 
-        // Proceed to insert the new student
-        db.query(sql, [name, email, password], (err, result) => {
+        // Proceed to insert the new student with student_id and additional fields
+        db.query(sql, [student_id, name, email, password, address, date_of_birth, department, phone_number, blood_group], (err, result) => {
             if (err) {
                 console.error('Error inserting student:', err);
                 return res.status(500).json({ message: 'Internal server error.' });
             }
-            res.status(201).json({ id: result.insertId, name, email });
+            res.status(201).json({ id: student_id, name, email , password, address, date_of_birth, department, phone_number, blood_group});
         });
     });
 }
@@ -51,15 +54,14 @@ async function getStudentById  (req, res) {
 };
 
 
-
-// Update a department
+//update a student
 async function updateStudent(req, res) {
-    const { student_id, name, email, password } = req.body;
+    const { student_id, name, email, password, address, date_of_birth, department, phone_number, blood_group } = req.body;
     const currentStudentId = req.params.id; // The original student ID from the URL parameters
 
-    // Validate input
-    if (!name && !email && !password && !student_id) {
-        return res.status(400).json({ message: 'At least one field (name, email, password, student_id) must be provided for update.' });
+    // Validate input: at least one field must be provided
+    if (!name && !email && !password && !student_id && !address && !date_of_birth && !department && !phone_number && !blood_group) {
+        return res.status(400).json({ message: 'At least one field must be provided for update.' });
     }
 
     // Build the update object dynamically
@@ -67,6 +69,11 @@ async function updateStudent(req, res) {
     if (name) updatedStudent.name = name;
     if (email) updatedStudent.email = email;
     if (password) updatedStudent.password = password;
+    if (address) updatedStudent.address = address;
+    if (date_of_birth) updatedStudent.date_of_birth = date_of_birth;
+    if (department) updatedStudent.department = department;
+    if (phone_number) updatedStudent.phone_number = phone_number;
+    if (blood_group) updatedStudent.blood_group = blood_group;
 
     // Check if changing the student_id and if it already exists
     if (student_id && student_id !== currentStudentId) {
@@ -80,7 +87,7 @@ async function updateStudent(req, res) {
                 return res.status(400).json({ message: 'Student ID already exists.' });
             }
 
-            // Proceed to update the student
+            // Proceed to update the student data
             const sql = 'UPDATE student SET ? WHERE student_id = ?';
             db.query(sql, [updatedStudent, currentStudentId], (err, result) => {
                 if (err) {
@@ -120,7 +127,6 @@ async function updateStudent(req, res) {
         });
     }
 }
-
 
 
 
