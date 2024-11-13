@@ -8350,3 +8350,10 @@ a[data-toggle="collapse"] {
   display: none;
 }
 
+.online-status{
+  color:green;
+}
+
+.offline-status{
+  color:red;
+}
