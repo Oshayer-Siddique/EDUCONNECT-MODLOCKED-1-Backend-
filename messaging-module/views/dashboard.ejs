@@ -9,7 +9,7 @@
                 if(users.length > 0){
                     for(let i = 0; i<users.length; i++){
                        %>
-                            <li class="list-group-item list-group-item-dark cursor-pointer user-list">
+                            <li class="list-group-item list-group-item-dark cursor-pointer user-list" data-id="<%= users[i]['_id'] %>">
                                     <img src="<%= 'http://127.0.0.1:3000/'+users[i]['image']%>" alt="" width="50px" height="50px">
                                     <%= users[i]['name'] %>
                                     <%
@@ -38,7 +38,12 @@
         <h3 class="start-head"> Click to Start the Chat </h3>
         <div class="chat-section">
             <div id="chat-container">
-
+                <div class="current-user-chat">
+                    
+                </div>
+                <div class="distance-user-chat">
+                    
+                </div>
             </div>
             <form action="" id="chat-form">
                 <input type="text" name="message" placeholder="Enter Message" id="message" class="border" required>
@@ -51,6 +56,7 @@
 
 <script>
     var sender_id = '<%=user._id %>';
+    var receiver_id; 
     var socket = io('/user-namespace',{
         auth:{
             token: '<%=user._id %>'
@@ -61,10 +67,16 @@
 
     $(document).ready(function(){
         $('.user-list').click(function(){
+
+            var userId = $(this).attr('data-id');
+            receiver_id = userId;
+
             $('.start-head').hide();
             $('.chat-section').show();
         });
-    })
+    });
+
+
 
 
     //update user online status
@@ -81,6 +93,35 @@
         $('#'+data.user_id+'-status').removeClass('online-status');
         $('#'+data.user_id+'-status').addClass('offline-status');
     });
+
+
+    //chat save of user
+    $('#chat-form').submit(function(event){
+        event.preventDefault();
+
+        var message =  $('#message').val();
+
+        $.ajax({
+            url:'/save-chat',
+            type:'POST',
+            data:{sender_id:sender_id,receiver_id:receiver_id,message:message},
+            success:function(data){
+                if(data.success){
+                    console.log(data);
+                    $('#message').val('');
+                    let chat = data.message;
+                    let html = `
+                    <div class=current-user-chat">
+                        <h5>`+chat+`</h5>
+                    </div>
+                    `;
+                }
+                else{
+                    alert(data.msg);
+                }
+            }
+        })
+    })
 
 </script>
 
