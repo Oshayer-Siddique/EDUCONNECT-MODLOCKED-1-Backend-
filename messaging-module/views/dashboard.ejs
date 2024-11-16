@@ -105,23 +105,37 @@
             url:'/save-chat',
             type:'POST',
             data:{sender_id:sender_id,receiver_id:receiver_id,message:message},
-            success:function(data){
-                if(data.success){
-                    console.log(data);
+            success:function(response){
+                if(response.success){
+                    console.log(response.data.message);
                     $('#message').val('');
-                    let chat = data.message;
+                    let chat = response.data.message;
                     let html = `
                     <div class=current-user-chat">
                         <h5>`+chat+`</h5>
                     </div>
                     `;
+                    $('#chat-container').append(html);
+                    socket.emit('newChat',  response.data);
                 }
                 else{
                     alert(data.msg);
                 }
             }
         })
-    })
+    });
+
+    socket.on('loadNewChat',function(data){
+        if(sender_id==data.receiver_id && receiver_id==data.sender_id){
+            let html  = `
+            <div class=distance-user-chat">
+                <h5>`+data.message+`</h5>
+            </div>
+            `;
+            $('#chat-container').append(html);
+        }
+        
+    });
 
 </script>
 
