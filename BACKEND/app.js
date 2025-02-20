@@ -9,6 +9,7 @@ const studentEnrollRoutes = require('./Admin/Routes/studentEnrollRoutes');
 const teacherAssignRoutes = require('./Admin/Routes/teacherAssignRoutes');
 const teacherRoutes = require('./Admin/Routes/teacherRoutes');
 const assignmentRoutes = require('./Admin/Routes/assignmentRoutes');
+const announcementRoutes = require('./Admin/Routes/announcementRouter')
 const cors = require('cors');
 
 // const a = require('./Admin/Routes/studentRoutes');
@@ -36,6 +37,7 @@ app.use('/teacher',teacherRoutes);
 app.use('/studentenroll',studentEnrollRoutes);
 app.use('/teacherassign',teacherAssignRoutes);
 app.use('/assignment',assignmentRoutes);
+app.use('/announcement',announcementRoutes);
 
 
 

@@ -84,6 +84,18 @@ CREATE TABLE student_enroll (
     FOREIGN KEY (course_id) REFERENCES course(course_id) ON DELETE CASCADE
 );
 
+
+
+CREATE TABLE announcement (
+    announcement_id BIGINT NOT NULL AUTO_INCREMENT,
+    course_id BIGINT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description VARCHAR(1000) NOT NULL,
+    PRIMARY KEY (announcement_id, course_id),
+    FOREIGN KEY (course_id) REFERENCES student_enroll(course_id) ON DELETE CASCADE
+);
+
+
 -- Assignment table
 CREATE TABLE assignment (
     assignment_id BIGINT PRIMARY KEY AUTO_INCREMENT,

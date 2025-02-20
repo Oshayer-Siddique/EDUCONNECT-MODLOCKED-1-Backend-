@@ -44,7 +44,6 @@ async function createStudent(req, res) {
 }
 
 
-//get by dept ID
 async function getStudentById  (req, res) {
     const sql = 'SELECT * FROM student WHERE student_id = ?';
     db.query(sql, [req.params.id], (err, result) => {
