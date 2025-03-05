@@ -101,6 +101,25 @@ const deleteChat = async(req,res)=>{
     }
 }
 
+const updateChat = async (req, res) => {
+    try {
+        const chat = await Chat.findByIdAndUpdate(
+            req.body.id,
+            { message: req.body.message },
+            { new: true }
+        );
+
+        if (!chat) {
+            return res.status(404).send({ success: false, msg: "Chat not found" });
+        }
+
+        res.status(200).send({ success: true, msg: "Chat updated!", data: chat });
+    } catch (error) {
+        res.status(400).send({ success: false, msg: error.message });
+    }
+};
+
+
 module.exports = {
     registerLoad,
     register,
@@ -109,5 +128,6 @@ module.exports = {
     login,
     loadDashboard,
     saveChat,
-    deleteChat
+    deleteChat,
+    updateChat
 }
