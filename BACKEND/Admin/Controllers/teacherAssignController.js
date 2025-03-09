@@ -27,7 +27,7 @@ async function enrollMultipleTeachers(req, res) {
 
         // Proceed with enrollment for valid teachers
         const enrollmentData = teacher_ids.map(teacher_id => [teacher_id, course_id]);
-        const enrollSql = 'INSERT INTO teacher_enroll (teacher_id, course_id) VALUES ?';
+        const enrollSql = 'INSERT INTO teacher_assignment (teacher_id, course_id) VALUES ?';
 
         await db.promise().query(enrollSql, [enrollmentData]);
         res.status(201).json({ message: 'Teachers enrolled successfully' });
