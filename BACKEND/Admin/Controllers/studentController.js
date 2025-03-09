@@ -44,13 +44,20 @@ async function createStudent(req, res) {
 }
 
 
-async function getStudentById  (req, res) {
+async function getStudentById(req, res) {
     const sql = 'SELECT * FROM student WHERE student_id = ?';
-    db.query(sql, [req.params.id], (err, result) => {
-        if (err) throw err;
-        res.json(result);
-    });
-};
+    try {
+        const [result] = await db.promise().query(sql, [req.params.id]);
+        if (result.length > 0) {
+            res.json(result);
+        } else {
+            res.status(404).json({ error: 'Student not found' });
+        }
+    } catch (error) {
+        console.error('Error fetching student:', error);
+        res.status(500).json({ error: 'Failed to retrieve student' });
+    }
+}
 
 
 //update a student
