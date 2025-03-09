@@ -59,9 +59,18 @@ async function unenrollStudent(req, res) {
     });
 }
 
+async function getAllEnrollments(req, res) {
+    try {
+        const [results] = await db.promise().query('SELECT * FROM student_enroll');
+        res.json(results);
+    } catch (error) {
+        console.error('Error fetching enrollments:', error);
+        res.status(500).json({ error: 'Failed to retrieve enrollments' });
+    }
+}
 
 module.exports = {
     enrollMultipleStudents,
     unenrollStudent,
-
+    getAllEnrollments,
 }
