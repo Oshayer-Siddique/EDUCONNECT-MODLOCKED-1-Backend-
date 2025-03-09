@@ -147,4 +147,12 @@ CREATE TABLE notifications (
 
 
 
+-- Login verification table
+
+CREATE TABLE usersInfo (
+    user_id VARCHAR(50) PRIMARY KEY,
+    user_role VARCHAR(255) NOT NULL,
+    user_password VARCHAR(255) NOT NULL
+);
+
 
