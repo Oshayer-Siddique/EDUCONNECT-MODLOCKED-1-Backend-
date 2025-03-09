@@ -10,15 +10,15 @@ CREATE TABLE department (
     dept_email VARCHAR(255) UNIQUE NOT NULL
 );
 
--- Department Admin table
-CREATE TABLE department_admin (
-    department_admin_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    department_id BIGINT,
-    FOREIGN KEY (department_id) REFERENCES department(department_id) ON DELETE SET NULL
-);
+-- -- Department Admin table
+-- CREATE TABLE department_admin (
+--     department_admin_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+--     name VARCHAR(255) NOT NULL,
+--     email VARCHAR(255) UNIQUE NOT NULL,
+--     password VARCHAR(255) NOT NULL,
+--     department_id BIGINT,
+--     FOREIGN KEY (department_id) REFERENCES department(department_id) ON DELETE SET NULL
+-- );
 
 -- Admin table
 CREATE TABLE admin (
@@ -147,12 +147,5 @@ CREATE TABLE notifications (
 
 
 
--- Login verification table
-
-CREATE TABLE usersInfo (
-    user_id VARCHAR(50) PRIMARY KEY,
-    user_role VARCHAR(255) NOT NULL,
-    user_password VARCHAR(255) NOT NULL
-);
 
 
