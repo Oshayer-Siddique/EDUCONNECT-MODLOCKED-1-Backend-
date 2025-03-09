@@ -75,9 +75,77 @@ async function getAllAssignments(req, res) {
 }
 
 
+async function getCoursesForTeacher(req, res) {
+    const teacherId = req.params.teacherId;
+    const sql = `
+        SELECT c.course_id, c.title, c.description, c.course_department
+        FROM teacher_assignment ta
+        JOIN course c ON ta.course_id = c.course_id
+        WHERE ta.teacher_id = ?
+    `;
+    try {
+        const [results] = await db.promise().query(sql, [teacherId]);
+        if (results.length > 0) {
+            const courses = results.map(course => {
+                // Calculate the semester based on the second character of the course_id
+                const semesterNumber = course.course_id.toString().charAt(1);
+                let semester;
+                switch (semesterNumber) {
+                    case '1':
+                        semester = 'First';
+                        break;
+                    case '2':
+                        semester = 'Second';
+                        break;
+                    case '3':
+                        semester = 'Third';
+                        break;
+                    case '4':
+                        semester = 'Fourth';
+                        break;
+                    case '5':
+                        semester = 'Fifth';
+                        break;
+                    case '6':
+                        semester = 'Sixth';
+                        break;
+                    case '7':
+                        semester = 'Seventh';
+                        break;
+                    case '8':
+                        semester = 'Eighth';
+                        break;
+                    default:
+                        semester = 'N/A';
+                }
+
+                // Set section to 1 or 2 (you can modify this logic if needed)
+                const section = 1;
+
+                // Set student count to 120
+                const student_count = 120;
+
+                return {
+                    ...course,
+                    section,
+                    student_count,
+                    semester
+                };
+            });
+            res.json(courses);
+        } else {
+            res.status(404).json({ error: 'No courses found for the given teacher ID' });
+        }
+    } catch (error) {
+        console.error('Error fetching courses for teacher:', error);
+        res.status(500).json({ error: 'Failed to retrieve courses' });
+    }
+}
+
 
 module.exports = {
     enrollMultipleTeachers,
     unenrollTeacher,
     getAllAssignments,
+    getCoursesForTeacher,
 }
