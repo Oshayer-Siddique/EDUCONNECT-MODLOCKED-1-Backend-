@@ -146,6 +146,50 @@ async function deleteStudent(req, res){
 };
 
 
+async function  getStudentEvent (req,res){
+    const {student_id} = req.params;
+    db.query("SELECT * FROM student_calender_events WHERE student_id = ?", [student_id], (err, results) => {
+        if (err) {
+            res.status(500).json({ error: "Database error" });
+        } else {
+            res.json(results);
+        }
+    });
+    
+}
+
+
+async function addStudentEvent(req, res) {
+    // Get student_id from the URL parameter
+    let { student_id } = req.params;
+
+    // Ensure student_id is an integer (parse it if needed)
+    student_id = parseInt(student_id, 10);
+
+    // Get other event data from request body
+    const { title, start_time, end_time, description } = req.body;
+
+    try {
+        // Check if student_id is valid
+        if (isNaN(student_id)) {
+            return res.status(400).json({ error: "Invalid student_id" });
+        }
+
+        // Database query to insert the event
+        const query = "INSERT INTO student_calender_events (student_id, title, start_time, end_time, description) VALUES (?, ?, ?, ?, ?)";
+        
+        const [result] = await db.promise().query(query, [student_id, title, start_time, end_time, description]);
+
+        // Respond with success message
+        res.json({ message: "Event added successfully", event_id: result.insertId });
+    } catch (err) {
+        console.error('Error adding event:', err);  // Log the error for better debugging
+        res.status(500).json({ error: "Database error", details: err.message });
+    }
+}
+
+
+
 
 
 
@@ -154,7 +198,8 @@ module.exports = {
     getStudentById,
     createStudent,
     updateStudent,
-    deleteStudent
-
+    deleteStudent,
+    getStudentEvent,
+    addStudentEvent
 
  };
