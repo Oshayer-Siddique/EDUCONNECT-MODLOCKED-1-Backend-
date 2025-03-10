@@ -188,6 +188,38 @@ async function addStudentEvent(req, res) {
     }
 }
 
+async function deleteStudentEvent(req, res) {
+    // Get event_id from the URL parameter (which is actually the 'id' of the event in the table)
+    let { id } = req.params;
+
+    // Ensure id is an integer (parse it if needed)
+    id = parseInt(id, 10);
+
+    try {
+        // Check if id is valid
+        if (isNaN(id)) {
+            return res.status(400).json({ error: "Invalid event id" });
+        }
+
+        // Database query to delete the event based on the id
+        const query = "DELETE FROM student_calender_events WHERE id = ?";
+
+        const [result] = await db.promise().query(query, [id]);
+
+        // If no rows were deleted, the id may not exist
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Event not found" });
+        }
+
+        // Respond with success message
+        res.json({ message: "Event deleted successfully" });
+    } catch (err) {
+        console.error('Error deleting event:', err);  // Log the error for better debugging
+        res.status(500).json({ error: "Database error", details: err.message });
+    }
+}
+
+
 
 
 
@@ -200,6 +232,7 @@ module.exports = {
     updateStudent,
     deleteStudent,
     getStudentEvent,
-    addStudentEvent
+    addStudentEvent,
+    deleteStudentEvent
 
  };
