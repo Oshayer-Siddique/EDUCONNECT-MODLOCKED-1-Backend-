@@ -12,11 +12,10 @@ async function getAllTeachers(req, res) {
 }
 
 // Create a new teacher
-// Create a new teacher
 async function createTeacher(req, res) {
     const sql = `
-        INSERT INTO teacher (teacher_id, department_id, name, email, password, date_of_birth, blood_group, department_name, address, phone_number)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO teacher (teacher_id, department_id, name, email, password, designation, date_of_birth, blood_group, department_name, address, phone_number)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const {
         teacher_id,
@@ -24,6 +23,7 @@ async function createTeacher(req, res) {
         name,
         email,
         password,
+        designation,
         date_of_birth,
         blood_group,
         department_name,
@@ -32,8 +32,8 @@ async function createTeacher(req, res) {
     } = req.body;
 
     // Validate required input fields
-    if (!teacher_id || !department_id || !name || !email || !password) {
-        return res.status(400).json({ message: 'Teacher ID, department ID, name, email, and password are required.' });
+    if (!teacher_id || !department_id || !name || !email || !password || !designation) {
+        return res.status(400).json({ message: 'Teacher ID, department ID, name, email, password, and designation are required.' });
     }
 
     // Check if the email or teacher_id is already taken
@@ -47,7 +47,7 @@ async function createTeacher(req, res) {
         }
 
         // Proceed to insert the new teacher with teacher_id and additional fields
-        db.query(sql, [teacher_id, department_id, name, email, password, date_of_birth, blood_group, department_name, address, phone_number], (err, result) => {
+        db.query(sql, [teacher_id, department_id, name, email, password, designation, date_of_birth, blood_group, department_name, address, phone_number], (err, result) => {
             if (err) {
                 console.error('Error inserting teacher:', err);
                 return res.status(500).json({ message: 'Internal server error.' });
@@ -56,7 +56,6 @@ async function createTeacher(req, res) {
         });
     });
 }
-
 
 // Get a teacher by ID
 async function getTeacherById(req, res) {
@@ -74,7 +73,6 @@ async function getTeacherById(req, res) {
 }
 
 // Update a teacher
-// Update a teacher
 async function updateTeacher(req, res) {
     const {
         teacher_id,
@@ -82,6 +80,7 @@ async function updateTeacher(req, res) {
         name,
         email,
         password,
+        designation,
         date_of_birth,
         blood_group,
         department_name,
@@ -91,8 +90,8 @@ async function updateTeacher(req, res) {
     const currentTeacherId = req.params.id; // The original teacher ID from the URL parameters
 
     // Validate input
-    if (!teacher_id && !department_id && !name && !email && !password && !date_of_birth && !blood_group && !department_name && !address && !phone_number) {
-        return res.status(400).json({ message: 'At least one field (teacher_id, department_id, name, email, password, etc.) must be provided for update.' });
+    if (!teacher_id && !department_id && !name && !email && !password && !designation && !date_of_birth && !blood_group && !department_name && !address && !phone_number) {
+        return res.status(400).json({ message: 'At least one field (teacher_id, department_id, name, email, password, designation, etc.) must be provided for update.' });
     }
 
     // Build the update object dynamically
@@ -102,6 +101,7 @@ async function updateTeacher(req, res) {
     if (name) updatedTeacher.name = name;
     if (email) updatedTeacher.email = email;
     if (password) updatedTeacher.password = password;
+    if (designation) updatedTeacher.designation = designation;
     if (date_of_birth) updatedTeacher.date_of_birth = date_of_birth;
     if (blood_group) updatedTeacher.blood_group = blood_group;
     if (department_name) updatedTeacher.department_name = department_name;

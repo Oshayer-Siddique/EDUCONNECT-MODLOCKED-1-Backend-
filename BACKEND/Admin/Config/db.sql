@@ -27,6 +27,7 @@ CREATE TABLE teacher (
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
+    designation VARCHAR(255),
     date_of_birth DATE,
     blood_group VARCHAR(3),
     department_name VARCHAR(100),
