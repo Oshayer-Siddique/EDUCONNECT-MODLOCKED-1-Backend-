@@ -1,13 +1,33 @@
-<h1>Login</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="css/login.css">
+</head>
 
-<% if (typeof message !== 'undefined') { %>
-    <h4 style="color:red;"><%= message %></h4>
-<% } %>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="left-section">
+                <img src="images/logo.jpg" alt="EduConnect Logo" class="logo">
+                <h2>EDUCHAT</h2>
+                <p>Unlock Your Potential!</p>
 
-<form action="" method="POST">
-    <input type="email" placeholder="Enter Email" name="email" required>
-    <br><br>
-    <input type="password" placeholder="Password" name="password" required>
-    <br><br>
-    <input type="submit" value="Login">
-</form>
+                <% if (typeof message !== 'undefined' && message !== '') { %>
+                    <h4 class="error-message"><%= message %></h4>
+                <% } %>
+
+                <form action="" method="POST">
+                    <input type="email" placeholder="Enter Your Email" name="email" required>
+                    <input type="password" placeholder="Enter Your Password" name="password" required>
+                    <button type="submit">Login</button>
+                </form>
+            </div>
+            <div class="right-section">
+                <img src="images/live-chat.png" alt="Student Image">
+            </div>
+        </div>
+    </div>
+
+</html>
