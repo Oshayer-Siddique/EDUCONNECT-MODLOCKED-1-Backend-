@@ -172,6 +172,18 @@ CREATE TABLE student_calender_events (
 );
 
 
+CREATE TABLE messages (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  course_id BIGINT NOT NULL,
+  student_id BIGINT,
+  teacher_id BIGINT,
+  sender_type ENUM('student', 'teacher') NOT NULL,
+  content TEXT NOT NULL,
+  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (course_id) REFERENCES course(course_id) ON DELETE CASCADE,
+  FOREIGN KEY (student_id) REFERENCES student(student_id) ON DELETE CASCADE,
+  FOREIGN KEY (teacher_id) REFERENCES teacher(teacher_id) ON DELETE CASCADE
+);
 
 
 
