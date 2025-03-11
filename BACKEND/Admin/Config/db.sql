@@ -1,5 +1,5 @@
 CREATE DATABASE university_management;
-USE school_management;
+USE university_management;
 
 
 -- Department table
