@@ -146,6 +146,24 @@ CREATE TABLE notifications (
 );
 
 
+-- Grade table
+
+
+CREATE TABLE grade (
+    student_id BIGINT,
+    course_id BIGINT,
+    quiz1_marks BIGINT, 
+    quiz2_marks BIGINT,
+    quiz3_marks BIGINT,
+    mid_sem_marks BIGINT,
+    final_sem_marks BIGINT,
+    assignments_marks BIGINT,
+    total_marks BIGINT,
+    PRIMARY KEY (student_id, course_id),
+    FOREIGN KEY (student_id) REFERENCES student(student_id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES course(course_id) ON DELETE CASCADE
+);
+
 
 
 

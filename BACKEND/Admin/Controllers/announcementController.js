@@ -1,12 +1,12 @@
-const db = require("../Config/db")
+const db = require("../Config/db");
 
 async function getAllAnnouncements(req, res) {
     try {
         const [results] = await db.promise().query('SELECT * FROM announcement');
         res.json(results);
     } catch (error) {
-        console.error('Error fetching announcement:', error);
-        res.status(500).json({ error: 'Failed to retrieve courses' });
+        console.error('Error fetching announcements:', error);
+        res.status(500).json({ error: 'Failed to retrieve announcements' });
     }
 }
 
@@ -19,7 +19,7 @@ function createAnnouncement(req, res) {
         return res.status(400).json({ message: 'Course ID, Title, and Description are required.' });
     }
 
-    // Check if the course_id exists in student_enroll
+    // Check if the course_id exists in the student_enroll table
     db.query('SELECT * FROM student_enroll WHERE course_id = ?', [course_id], (err, results) => {
         if (err) {
             console.error('Error checking course_id:', err);
