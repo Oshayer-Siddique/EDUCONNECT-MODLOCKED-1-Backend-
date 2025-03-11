@@ -179,7 +179,7 @@ CREATE TABLE student_calender_events (
 -------FUNCTIONS-------------------
 -----------------------------------
 
-
+-------------caluculate_grade function----------------
 
 DELIMITER $$
 
@@ -227,5 +227,69 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+
+
+--------- trigger to calculate grade----------------
+
+
+
+
+DELIMITER $$
+
+CREATE TRIGGER grade_marks_validation
+BEFORE INSERT ON grade
+FOR EACH ROW
+BEGIN
+    -- Validate quiz1_marks (0-15)
+    IF NEW.quiz1_marks < 0 OR NEW.quiz1_marks > 15 THEN
+        SET NEW.quiz1_marks = 0;
+    END IF;
+
+    -- Validate quiz2_marks (0-15)
+    IF NEW.quiz2_marks < 0 OR NEW.quiz2_marks > 15 THEN
+        SET NEW.quiz2_marks = 0;
+    END IF;
+
+    -- Validate quiz3_marks (0-15)
+    IF NEW.quiz3_marks < 0 OR NEW.quiz3_marks > 15 THEN
+        SET NEW.quiz3_marks = 0;
+    END IF;
+
+    -- Validate assignments_marks (0-15)
+    IF NEW.assignments_marks < 0 OR NEW.assignments_marks > 15 THEN
+        SET NEW.assignments_marks = 0;
+    END IF;
+
+    -- Validate attendance_marks (0-30)
+    IF NEW.attendance_marks < 0 OR NEW.attendance_marks > 30 THEN
+        SET NEW.attendance_marks = 0;
+    END IF;
+
+    -- Validate mid_sem_marks (0-75)
+    IF NEW.mid_sem_marks < 0 OR NEW.mid_sem_marks > 75 THEN
+        SET NEW.mid_sem_marks = 0;
+    END IF;
+
+    -- Validate final_sem_marks (0-150)
+    IF NEW.final_sem_marks < 0 OR NEW.final_sem_marks > 150 THEN
+        SET NEW.final_sem_marks = 0;
+    END IF;
+
+    -- Optionally: Recalculate total_marks
+    SET NEW.total_marks = NEW.quiz1_marks + NEW.quiz2_marks + NEW.quiz3_marks +
+                          NEW.assignments_marks + NEW.attendance_marks +
+                          NEW.mid_sem_marks + NEW.final_sem_marks;
+END$$
+
+DELIMITER ;
+
+
+
+
+
+
+
+
 
 
