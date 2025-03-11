@@ -10,15 +10,7 @@ CREATE TABLE department (
     dept_email VARCHAR(255) UNIQUE NOT NULL
 );
 
--- -- Department Admin table
--- CREATE TABLE department_admin (
---     department_admin_id BIGINT PRIMARY KEY AUTO_INCREMENT,
---     name VARCHAR(255) NOT NULL,
---     email VARCHAR(255) UNIQUE NOT NULL,
---     password VARCHAR(255) NOT NULL,
---     department_id BIGINT,
---     FOREIGN KEY (department_id) REFERENCES department(department_id) ON DELETE SET NULL
--- );
+
 
 -- Admin table
 CREATE TABLE admin (
@@ -146,6 +138,7 @@ CREATE TABLE notifications (
 );
 
 
+
 -- Grade table
 
 
@@ -163,6 +156,20 @@ CREATE TABLE grade (
     FOREIGN KEY (student_id) REFERENCES student(student_id) ON DELETE CASCADE,
     FOREIGN KEY (course_id) REFERENCES course(course_id) ON DELETE CASCADE
 );
+
+
+CREATE TABLE student_calender_events (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    student_id BIGINT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    start_time DATETIME NOT NULL,
+    end_time DATETIME NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES student(student_id) ON DELETE CASCADE
+);
+
+
 
 
 
