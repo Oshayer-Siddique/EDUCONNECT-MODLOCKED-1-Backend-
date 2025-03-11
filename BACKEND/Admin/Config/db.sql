@@ -151,6 +151,7 @@ CREATE TABLE grade (
     mid_sem_marks BIGINT,
     final_sem_marks BIGINT,
     assignments_marks BIGINT,
+    attendance_marks BIGINT,
     total_marks BIGINT,
     PRIMARY KEY (student_id, course_id),
     FOREIGN KEY (student_id) REFERENCES student(student_id) ON DELETE CASCADE,
@@ -172,5 +173,59 @@ CREATE TABLE student_calender_events (
 
 
 
+
+
+-----------------------------------
+-------FUNCTIONS-------------------
+-----------------------------------
+
+
+
+DELIMITER $$
+
+CREATE FUNCTION calculate_grade (
+    quiz1_marks BIGINT,
+    quiz2_marks BIGINT,
+    quiz3_marks BIGINT,
+    assignments_marks BIGINT,
+    attendance_marks BIGINT,
+    mid_sem_marks BIGINT,
+    final_sem_marks BIGINT
+) RETURNS VARCHAR(2)
+DETERMINISTIC
+BEGIN
+    DECLARE total_marks BIGINT;
+    DECLARE grade VARCHAR(2);
+
+    -- Calculate total marks
+    SET total_marks = quiz1_marks + quiz2_marks + quiz3_marks +
+                      assignments_marks + attendance_marks +
+                      mid_sem_marks + final_sem_marks;
+
+    -- Determine grade based on total marks
+    IF total_marks >= 240 THEN
+        SET grade = 'A+';
+    ELSEIF total_marks >= 225 THEN
+        SET grade = 'A';
+    ELSEIF total_marks >= 210 THEN
+        SET grade = 'A-';
+    ELSEIF total_marks >= 195 THEN
+        SET grade = 'B+';
+    ELSEIF total_marks >= 180 THEN
+        SET grade = 'B';
+    ELSEIF total_marks >= 165 THEN
+        SET grade = 'B-';
+    ELSEIF total_marks >= 150 THEN
+        SET grade = 'C';
+    ELSEIF total_marks >= 135 THEN
+        SET grade = 'D';
+    ELSE
+        SET grade = 'F';
+    END IF;
+
+    RETURN grade;
+END$$
+
+DELIMITER ;
 
 

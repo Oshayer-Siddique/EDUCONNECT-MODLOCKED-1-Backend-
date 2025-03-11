@@ -11,6 +11,7 @@ const teacherRoutes = require('./Admin/Routes/teacherRoutes');
 const assignmentRoutes = require('./Admin/Routes/assignmentRoutes');
 const announcementRoutes = require('./Admin/Routes/announcementRouter');
 const loginRoutes = require('./Admin/Routes/loginRoutes');
+const gradeRoutes = require('./Admin/Routes/gradeRoutes');
 const cors = require('cors');
 
 const port = 8000;
@@ -36,6 +37,7 @@ app.use('/teacherassign', teacherAssignRoutes);
 app.use('/assignment', assignmentRoutes);
 app.use('/announcement', announcementRoutes);
 app.use('/login', loginRoutes);
+app.use('/grades', gradeRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
