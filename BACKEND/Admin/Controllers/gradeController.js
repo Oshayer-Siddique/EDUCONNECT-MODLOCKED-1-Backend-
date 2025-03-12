@@ -57,10 +57,15 @@ async function assignGrade(req, res) {
             return res.status(404).json({ error: 'Student is not enrolled in the course' });
         }
 
+        // Calculate total marks by choosing the best 3 among the quiz and assignments
+        const quizMarks = [parseInt(quiz1_marks, 10), parseInt(quiz2_marks, 10), parseInt(quiz3_marks, 10)];
+        const bestQuizMarks = quizMarks.sort((a, b) => b - a).slice(0, 3);
+        const totalMarks = bestQuizMarks.reduce((a, b) => a + b, 0) + parseInt(assignments_marks, 10) + parseInt(attendance_marks, 10) + parseInt(mid_sem_marks, 10) + parseInt(final_sem_marks, 10);
+
         // Insert the grade into the grade table
         const insertGradeSql = `
-            INSERT INTO grade (student_id, course_id, quiz1_marks, quiz2_marks, quiz3_marks, assignments_marks, attendance_marks, mid_sem_marks, final_sem_marks)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO grade (student_id, course_id, quiz1_marks, quiz2_marks, quiz3_marks, assignments_marks, attendance_marks, mid_sem_marks, final_sem_marks, total_marks)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE
             quiz1_marks = VALUES(quiz1_marks),
             quiz2_marks = VALUES(quiz2_marks),
@@ -68,9 +73,10 @@ async function assignGrade(req, res) {
             assignments_marks = VALUES(assignments_marks),
             attendance_marks = VALUES(attendance_marks),
             mid_sem_marks = VALUES(mid_sem_marks),
-            final_sem_marks = VALUES(final_sem_marks)
+            final_sem_marks = VALUES(final_sem_marks),
+            total_marks = VALUES(total_marks)
         `;
-        await db.promise().query(insertGradeSql, [student_id, course_id, quiz1_marks, quiz2_marks, quiz3_marks, assignments_marks, attendance_marks, mid_sem_marks, final_sem_marks]);
+        await db.promise().query(insertGradeSql, [student_id, course_id, quiz1_marks, quiz2_marks, quiz3_marks, assignments_marks, attendance_marks, mid_sem_marks, final_sem_marks, totalMarks]);
         res.status(201).json({ message: 'Grade assigned successfully' });
     } catch (error) {
         console.error('Error assigning grade:', error);
@@ -89,13 +95,18 @@ async function updateGrade(req, res) {
             return res.status(404).json({ error: 'Grade entry not found' });
         }
 
+        // Calculate total marks by choosing the best 3 among the quiz and assignments
+        const quizMarks = [parseInt(quiz1_marks, 10), parseInt(quiz2_marks, 10), parseInt(quiz3_marks, 10)];
+        const bestQuizMarks = quizMarks.sort((a, b) => b - a).slice(0, 3);
+        const totalMarks = bestQuizMarks.reduce((a, b) => a + b, 0) + parseInt(assignments_marks, 10) + parseInt(attendance_marks, 10) + parseInt(mid_sem_marks, 10) + parseInt(final_sem_marks, 10);
+
         // Update the grade in the grade table
         const updateGradeSql = `
             UPDATE grade
-            SET quiz1_marks = ?, quiz2_marks = ?, quiz3_marks = ?, assignments_marks = ?, attendance_marks = ?, mid_sem_marks = ?, final_sem_marks = ?
+            SET quiz1_marks = ?, quiz2_marks = ?, quiz3_marks = ?, assignments_marks = ?, attendance_marks = ?, mid_sem_marks = ?, final_sem_marks = ?, total_marks = ?
             WHERE student_id = ? AND course_id = ?
         `;
-        await db.promise().query(updateGradeSql, [quiz1_marks, quiz2_marks, quiz3_marks, assignments_marks, attendance_marks, mid_sem_marks, final_sem_marks, student_id, course_id]);
+        await db.promise().query(updateGradeSql, [quiz1_marks, quiz2_marks, quiz3_marks, assignments_marks, attendance_marks, mid_sem_marks, final_sem_marks, totalMarks, student_id, course_id]);
         res.status(200).json({ message: 'Grade updated successfully' });
     } catch (error) {
         console.error('Error updating grade:', error);
