@@ -10,7 +10,7 @@ const { enrollMultipleStudents,
 router.post('/enroll',enrollMultipleStudents);
 router.delete('/unenroll',unenrollStudent);
 router.get('/enrollments',getAllEnrollments);
-routter.get('/enrollments/:student_id',getCoursesByStudentId);
+router.get('/enrollments/:student_id',getCoursesByStudentId);
 
 module.exports = router;
 
