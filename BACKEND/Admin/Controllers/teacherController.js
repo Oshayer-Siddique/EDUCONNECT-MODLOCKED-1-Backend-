@@ -173,10 +173,86 @@ async function deleteTeacher(req, res) {
     });
 }
 
+
+
+async function getTeacherEvent(req, res) {
+    const { teacher_id } = req.params;
+    db.query("SELECT * FROM teacher_calender_events WHERE teacher_id = ?", [teacher_id], (err, results) => {
+        if (err) {
+            res.status(500).json({ error: "Database error" });
+        } else {
+            res.json(results);
+        }
+    });
+}
+
+async function addTeacherEvent(req, res) {
+    // Get teacher_id from the URL parameter
+    let { teacher_id } = req.params;
+
+    // Ensure teacher_id is an integer (parse it if needed)
+    teacher_id = parseInt(teacher_id, 10);
+
+    // Get other event data from request body
+    const { title, start_time, end_time, description } = req.body;
+
+    try {
+        // Check if teacher_id is valid
+        if (isNaN(teacher_id)) {
+            return res.status(400).json({ error: "Invalid teacher_id" });
+        }
+
+        // Database query to insert the event
+        const query = "INSERT INTO teacher_calender_events (teacher_id, title, start_time, end_time, description) VALUES (?, ?, ?, ?, ?)";
+        
+        const [result] = await db.promise().query(query, [teacher_id, title, start_time, end_time, description]);
+
+        // Respond with success message
+        res.json({ message: "Event added successfully", event_id: result.insertId });
+    } catch (err) {
+        console.error('Error adding event:', err);  // Log the error for better debugging
+        res.status(500).json({ error: "Database error", details: err.message });
+    }
+}
+
+async function deleteTeacherEvent(req, res) {
+    // Get event_id from the URL parameter (which is actually the 'id' of the event in the table)
+    let { id } = req.params;
+
+    // Ensure id is an integer (parse it if needed)
+    id = parseInt(id, 10);
+
+    try {
+        // Check if id is valid
+        if (isNaN(id)) {
+            return res.status(400).json({ error: "Invalid event id" });
+        }
+
+        // Database query to delete the event based on the id
+        const query = "DELETE FROM teacher_calender_events WHERE id = ?";
+
+        const [result] = await db.promise().query(query, [id]);
+
+        // If no rows were deleted, the id may not exist
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Event not found" });
+        }
+
+        // Respond with success message
+        res.json({ message: "Event deleted successfully" });
+    } catch (err) {
+        console.error('Error deleting event:', err);  // Log the error for better debugging
+        res.status(500).json({ error: "Database error", details: err.message });
+    }
+}
+
 module.exports = {
     getAllTeachers,
     getTeacherById,
     createTeacher,
     updateTeacher,
-    deleteTeacher
+    deleteTeacher,
+    getTeacherEvent,
+    addTeacherEvent,
+    deleteTeacherEvent
 };
