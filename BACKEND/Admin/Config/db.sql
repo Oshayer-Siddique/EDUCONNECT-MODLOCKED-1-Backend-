@@ -115,17 +115,7 @@ CREATE TABLE submission (
     FOREIGN KEY (student_id) REFERENCES student(student_id) ON DELETE CASCADE
 );
 
--- Announcement table
-CREATE TABLE announcement (
-    announcement_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    course_id BIGINT,
-    content TEXT NOT NULL,
-    posted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (course_id) REFERENCES course(course_id) ON DELETE CASCADE
-);
 
-
---notification table
 
 
 CREATE TABLE notifications (
