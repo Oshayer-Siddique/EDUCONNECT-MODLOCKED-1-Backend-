@@ -66,4 +66,21 @@ function deleteAnnouncement(req, res) {
     });
 }
 
-module.exports = { createAnnouncement, deleteAnnouncement, getAllAnnouncements};
+// New function to get announcements by course ID
+async function getAnnouncementByCourseID(req, res) {
+    const { course_id } = req.params;
+
+    try {
+        const [results] = await db.promise().query('SELECT * FROM announcement WHERE course_id = ?', [course_id]);
+        if (results.length > 0) {
+            res.json(results);
+        } else {
+            res.status(404).json({ message: 'No announcements found for the given course ID' });
+        }
+    } catch (error) {
+        console.error('Error fetching announcements:', error);
+        res.status(500).json({ error: 'Failed to retrieve announcements' });
+    }
+}
+
+module.exports = { createAnnouncement, deleteAnnouncement, getAllAnnouncements, getAnnouncementByCourseID };
