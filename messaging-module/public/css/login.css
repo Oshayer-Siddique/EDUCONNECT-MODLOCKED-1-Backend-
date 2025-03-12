@@ -1,0 +1,142 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #0F2C3E;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    flex-direction: column;
+}
+
+/* Container for Login Box */
+.login-container {
+    width: 100vw;
+    height: 100vh;
+    background-color: #0a242e;
+    /* Dark green background */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+}
+
+/* Login Box */
+.login-box {
+    display: flex;
+    flex-direction: row;
+    width: 800px;
+    height: 400px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+/* Left Section */
+.left-section {
+    width: 50%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+}
+
+/* Logo */
+.logo {
+    width: 120px;
+    margin-bottom: 10px;
+}
+
+/* Title and Text */
+h2 {
+    color: #003366;
+    margin-bottom: 5px;
+}
+
+p {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+/* Error Message */
+.error-message {
+    color: red;
+    margin-bottom: 10px;
+}
+
+/* Form Inputs */
+form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* Button */
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #003366;
+}
+
+/* Right Section */
+.right-section {
+    width: 50%;
+    background-color: #0f516a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.right-section img {
+    width: 180px;
+    height: auto;
+    animation: pulse 3s infinite ease-in-out;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Footer */
+footer {
+    margin-top: 10px;
+    color: #9eb0bc;
+    font-size: 14px;
+}
+
+footer span {
+    font-weight: bold;
+}
