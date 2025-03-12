@@ -46,4 +46,61 @@ async function getCoursesByStudent(req, res) {
     }
 }
 
-module.exports = { getGradesByStudentAndCourse, getCoursesByStudent };
+async function assignGrade(req, res) {
+    const { student_id, course_id, quiz1_marks, quiz2_marks, quiz3_marks, assignments_marks, attendance_marks, mid_sem_marks, final_sem_marks } = req.body;
+
+    // Check if the student is enrolled in the course
+    const enrollmentSql = 'SELECT * FROM student_enroll WHERE student_id = ? AND course_id = ?';
+    try {
+        const [enrollmentResults] = await db.promise().query(enrollmentSql, [student_id, course_id]);
+        if (enrollmentResults.length === 0) {
+            return res.status(404).json({ error: 'Student is not enrolled in the course' });
+        }
+
+        // Insert the grade into the grade table
+        const insertGradeSql = `
+            INSERT INTO grade (student_id, course_id, quiz1_marks, quiz2_marks, quiz3_marks, assignments_marks, attendance_marks, mid_sem_marks, final_sem_marks)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+            quiz1_marks = VALUES(quiz1_marks),
+            quiz2_marks = VALUES(quiz2_marks),
+            quiz3_marks = VALUES(quiz3_marks),
+            assignments_marks = VALUES(assignments_marks),
+            attendance_marks = VALUES(attendance_marks),
+            mid_sem_marks = VALUES(mid_sem_marks),
+            final_sem_marks = VALUES(final_sem_marks)
+        `;
+        await db.promise().query(insertGradeSql, [student_id, course_id, quiz1_marks, quiz2_marks, quiz3_marks, assignments_marks, attendance_marks, mid_sem_marks, final_sem_marks]);
+        res.status(201).json({ message: 'Grade assigned successfully' });
+    } catch (error) {
+        console.error('Error assigning grade:', error);
+        res.status(500).json({ error: 'Failed to assign grade' });
+    }
+}
+
+async function updateGrade(req, res) {
+    const { student_id, course_id, quiz1_marks, quiz2_marks, quiz3_marks, assignments_marks, attendance_marks, mid_sem_marks, final_sem_marks } = req.body;
+
+    // Check if the grade entry exists
+    const gradeSql = 'SELECT * FROM grade WHERE student_id = ? AND course_id = ?';
+    try {
+        const [gradeResults] = await db.promise().query(gradeSql, [student_id, course_id]);
+        if (gradeResults.length === 0) {
+            return res.status(404).json({ error: 'Grade entry not found' });
+        }
+
+        // Update the grade in the grade table
+        const updateGradeSql = `
+            UPDATE grade
+            SET quiz1_marks = ?, quiz2_marks = ?, quiz3_marks = ?, assignments_marks = ?, attendance_marks = ?, mid_sem_marks = ?, final_sem_marks = ?
+            WHERE student_id = ? AND course_id = ?
+        `;
+        await db.promise().query(updateGradeSql, [quiz1_marks, quiz2_marks, quiz3_marks, assignments_marks, attendance_marks, mid_sem_marks, final_sem_marks, student_id, course_id]);
+        res.status(200).json({ message: 'Grade updated successfully' });
+    } catch (error) {
+        console.error('Error updating grade:', error);
+        res.status(500).json({ error: 'Failed to update grade' });
+    }
+}
+
+module.exports = { getGradesByStudentAndCourse, getCoursesByStudent, assignGrade, updateGrade };
