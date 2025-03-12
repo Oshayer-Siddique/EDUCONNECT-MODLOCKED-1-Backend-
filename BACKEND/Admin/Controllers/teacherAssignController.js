@@ -1,6 +1,5 @@
 const db = require('../Config/db');
 
-
 async function enrollMultipleTeachers(req, res) {
     const { course_id, teacher_id } = req.body;
 
@@ -63,7 +62,6 @@ async function unenrollTeacher(req, res) {
     });
 }
 
-
 async function getAllAssignments(req, res) {
     try {
         const [results] = await db.promise().query('SELECT * FROM teacher_assignment');
@@ -73,7 +71,6 @@ async function getAllAssignments(req, res) {
         res.status(500).json({ error: 'Failed to retrieve assignments' });
     }
 }
-
 
 async function getCoursesForTeacher(req, res) {
     const teacherId = req.params.teacherId;
@@ -142,10 +139,27 @@ async function getCoursesForTeacher(req, res) {
     }
 }
 
+// New function to get the teacher ID by course ID
+async function getTeacherByCourseId(req, res) {
+    const { course_id } = req.params;
+
+    try {
+        const [results] = await db.promise().query('SELECT teacher_id FROM teacher_assignment WHERE course_id = ?', [course_id]);
+        if (results.length > 0) {
+            res.json(results[0]);
+        } else {
+            res.status(404).json({ error: 'No teacher found for the given course ID' });
+        }
+    } catch (error) {
+        console.error('Error fetching teacher for course:', error);
+        res.status(500).json({ error: 'Failed to retrieve teacher for course' });
+    }
+}
 
 module.exports = {
     enrollMultipleTeachers,
     unenrollTeacher,
     getAllAssignments,
     getCoursesForTeacher,
-}
+    getTeacherByCourseId, // Export the new function
+};

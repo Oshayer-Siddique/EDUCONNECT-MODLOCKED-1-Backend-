@@ -69,8 +69,21 @@ async function getAllEnrollments(req, res) {
     }
 }
 
+async function getCoursesByStudentId(req, res) {
+    const { student_id } = req.params;
+
+    try {
+        const [results] = await db.promise().query('SELECT course_id FROM student_enroll WHERE student_id = ?', [student_id]);
+        res.json(results);
+    } catch (error) {
+        console.error('Error fetching courses for student:', error);
+        res.status(500).json({ error: 'Failed to retrieve courses for student' });
+    }
+}
+
 module.exports = {
     enrollMultipleStudents,
     unenrollStudent,
     getAllEnrollments,
+    getCoursesByStudentId,
 }
