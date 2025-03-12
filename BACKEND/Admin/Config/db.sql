@@ -116,6 +116,7 @@ CREATE TABLE submission (
 );
 
 
+--notification table
 
 
 CREATE TABLE notifications (

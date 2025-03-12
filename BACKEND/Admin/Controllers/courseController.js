@@ -103,6 +103,24 @@ async function deleteCourse(req, res){
 };
 
 
+async function getCoursesByStudentId(req, res) {
+    const studentId = req.params.student_id;
+    try {
+        const query = `
+            SELECT c.course_id, c.course_name
+            FROM course c
+            JOIN student_enroll se ON c.course_id = se.course_id
+            WHERE se.student_id = ?
+        `;
+        const [results] = await db.promise().query(query, [studentId]);
+        res.json(results);
+    } catch (error) {
+        console.error('Error fetching courses for student:', error);
+        res.status(500).json({ error: 'Failed to retrieve courses for student' });
+    }
+}
+
+
 
 
 
@@ -112,6 +130,7 @@ module.exports = {
     updateCourse,
     getCourseById,
     deleteCourse,
+    getCoursesByStudentId,
 
 
  };
