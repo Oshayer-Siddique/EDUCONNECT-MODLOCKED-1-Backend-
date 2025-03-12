@@ -107,7 +107,7 @@ async function getCoursesByStudentId(req, res) {
     const studentId = req.params.student_id;
     try {
         const query = `
-            SELECT c.course_id, c.course_name
+            SELECT c.course_id, c.title
             FROM course c
             JOIN student_enroll se ON c.course_id = se.course_id
             WHERE se.student_id = ?
