@@ -103,4 +103,14 @@ async function updateGrade(req, res) {
     }
 }
 
-module.exports = { getGradesByStudentAndCourse, getCoursesByStudent, assignGrade, updateGrade };
+async function getAllGrades(req, res) {
+    try {
+        const [results] = await db.promise().query('SELECT student_id, course_id FROM grade');
+        res.json(results);
+    } catch (error) {
+        console.error('Error fetching grades:', error);
+        res.status(500).json({ error: 'Failed to retrieve grades' });
+    }
+}
+
+module.exports = { getGradesByStudentAndCourse, getCoursesByStudent, assignGrade, updateGrade, getAllGrades };
