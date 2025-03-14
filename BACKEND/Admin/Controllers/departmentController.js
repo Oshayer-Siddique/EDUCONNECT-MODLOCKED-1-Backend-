@@ -21,25 +21,20 @@ async function createDepartment(req, res) {
         return res.status(400).json({ message: 'Department ID, name, and department email are required.' });
     }
 
-    // Check if the department email is already in use
-    db.query('SELECT * FROM department WHERE dept_email = ?', [dept_email], (err, results) => {
-        if (err) {
-            console.error('Error checking department email:', err);
-            return res.status(500).json({ message: 'Internal server error.' });
-        }
-        if (results.length > 0) {
+    try {
+        // Check if the department email is already in use
+        const [existingDepartments] = await db.promise().query('SELECT * FROM department WHERE dept_email = ?', [dept_email]);
+        if (existingDepartments.length > 0) {
             return res.status(400).json({ message: 'Department email already exists.' });
         }
 
         // Proceed to insert the new department
-        db.query(sql, [department_id, name, location, dept_email], (err, result) => {
-            if (err) {
-                return res.status(500).json({ message: 'Internal server error.' });
-                console.error('Error inserting department:', err);
-            }
-            res.status(201).json({ department_id: department_id, name, location, dept_email });
-        });
-    });
+        const [result] = await db.promise().query(sql, [department_id, name, location, dept_email]);
+        res.status(201).json({ department_id, name, location, dept_email });
+    } catch (err) {
+        console.error('Error inserting department:', err);
+        res.status(500).json({ message: 'Internal server error.' });
+    }
 }
 
 
