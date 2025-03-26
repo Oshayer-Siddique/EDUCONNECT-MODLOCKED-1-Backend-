@@ -373,3 +373,37 @@ DELIMITER ;
 
 
 
+-------------Using Rollup to get the total count----------------
+
+
+
+
+
+
+DELIMITER $$
+
+CREATE FUNCTION get_students_count_by_course(course_id BIGINT)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE total_students INT;
+
+    SELECT total_students INTO total_students
+    FROM (
+        SELECT 
+            course_id, 
+            COUNT(student_id) AS total_students
+        FROM 
+            student_enroll
+        GROUP BY 
+            course_id WITH ROLLUP
+    ) AS rollup_result
+    WHERE course_id = course_id;
+
+    RETURN total_students;
+END$$
+
+DELIMITER ;
+
+
+
