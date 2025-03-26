@@ -300,7 +300,73 @@ DELIMITER ;
 
 
 
+--------- Using explicit cursor and procedure to get the total count ---------------------
 
+
+
+DELIMITER $$
+
+CREATE PROCEDURE get_total_counts_with_cursor()
+BEGIN
+    DECLARE total_courses INT DEFAULT 0;
+    DECLARE total_departments INT DEFAULT 0;
+    DECLARE total_students INT DEFAULT 0;
+    DECLARE total_teachers INT DEFAULT 0;
+
+    -- Declare cursors
+    DECLARE courses_cursor CURSOR FOR SELECT course_id FROM course;
+    DECLARE departments_cursor CURSOR FOR SELECT department_id FROM department;
+    DECLARE students_cursor CURSOR FOR SELECT student_id FROM student;
+    DECLARE teachers_cursor CURSOR FOR SELECT teacher_id FROM teacher;
+
+    -- Declare variables to hold fetched values
+    DECLARE dummy INT;
+
+    -- Count total courses
+    OPEN courses_cursor;
+    FETCH courses_cursor INTO dummy;
+    WHILE ROW_COUNT() > 0 DO
+        SET total_courses = total_courses + 1;
+        FETCH courses_cursor INTO dummy;
+    END WHILE;
+    CLOSE courses_cursor;
+
+    -- Count total departments
+    OPEN departments_cursor;
+    FETCH departments_cursor INTO dummy;
+    WHILE ROW_COUNT() > 0 DO
+        SET total_departments = total_departments + 1;
+        FETCH departments_cursor INTO dummy;
+    END WHILE;
+    CLOSE departments_cursor;
+
+    -- Count total students
+    OPEN students_cursor;
+    FETCH students_cursor INTO dummy;
+    WHILE ROW_COUNT() > 0 DO
+        SET total_students = total_students + 1;
+        FETCH students_cursor INTO dummy;
+    END WHILE;
+    CLOSE students_cursor;
+
+    -- Count total teachers
+    OPEN teachers_cursor;
+    FETCH teachers_cursor INTO dummy;
+    WHILE ROW_COUNT() > 0 DO
+        SET total_teachers = total_teachers + 1;
+        FETCH teachers_cursor INTO dummy;
+    END WHILE;
+    CLOSE teachers_cursor;
+
+    -- Output the results
+    SELECT 
+        total_courses AS Total_Courses,
+        total_departments AS Total_Departments,
+        total_students AS Total_Students,
+        total_teachers AS Total_Teachers;
+END$$
+
+DELIMITER ;
 
 
 
