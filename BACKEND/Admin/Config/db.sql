@@ -406,3 +406,64 @@ DELIMITER ;
 
 
 
+---------calculate_total_marks function----------------
+
+
+
+
+DELIMITER $$
+
+CREATE FUNCTION calculate_total_marks(student_id_param BIGINT, course_id_param BIGINT)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE total_marks INT;
+    DECLARE best_three_sum INT;
+    DECLARE quiz1 INT;
+    DECLARE quiz2 INT;
+    DECLARE quiz3 INT;
+    DECLARE assignment INT;
+    DECLARE attendance INT;
+    DECLARE mid_sem INT;
+    DECLARE final_sem INT;
+
+    SELECT 
+        quiz1_marks, quiz2_marks, quiz3_marks, assignments_marks,
+        attendance_marks, mid_sem_marks, final_sem_marks
+    INTO 
+        quiz1, quiz2, quiz3, assignment,
+        attendance, mid_sem, final_sem
+    FROM grade
+    WHERE student_id = student_id_param AND course_id = course_id_param;
+
+
+    SET best_three_sum = (
+        SELECT SUM(mark)
+        FROM (
+            SELECT mark
+            FROM (
+                SELECT quiz1 AS mark
+                UNION ALL
+                SELECT quiz2
+                UNION ALL
+                SELECT quiz3
+                UNION ALL
+                SELECT assignment
+            ) AS all_marks
+            ORDER BY mark DESC
+            LIMIT 3
+        ) AS best_three
+    );
+
+    
+    SET total_marks = attendance + mid_sem + final_sem + best_three_sum;
+
+    UPDATE grade
+    SET total_marks = total_marks
+    WHERE student_id = student_id_param AND course_id = course_id_param;
+
+    
+    RETURN total_marks;
+END$$
+
+DELIMITER ;
