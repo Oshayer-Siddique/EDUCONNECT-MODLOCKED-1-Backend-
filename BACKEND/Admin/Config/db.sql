@@ -379,26 +379,25 @@ DELIMITER ;
 
 
 
-
 DELIMITER $$
 
-CREATE FUNCTION get_students_count_by_course(course_id BIGINT)
+CREATE FUNCTION get_students_count_by_course_with_rollup(course_id_param BIGINT)
 RETURNS INT
 DETERMINISTIC
 BEGIN
     DECLARE total_students INT;
 
-    SELECT total_students INTO total_students
+    SELECT total_student INTO total_students
     FROM (
         SELECT 
             course_id, 
-            COUNT(student_id) AS total_students
+            COUNT(student_id) AS total_student
         FROM 
             student_enroll
         GROUP BY 
             course_id WITH ROLLUP
     ) AS rollup_result
-    WHERE course_id = course_id;
+    WHERE course_id_param IS NOT NULL AND course_id = course_id_param;
 
     RETURN total_students;
 END$$

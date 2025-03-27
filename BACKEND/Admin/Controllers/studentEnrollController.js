@@ -81,9 +81,30 @@ async function getCoursesByStudentId(req, res) {
     }
 }
 
+async function getStudentCountByCourse(req, res) {
+    const { course_id } = req.params;
+
+    if (!course_id) {
+        return res.status(400).json({ message: 'Course ID is required.' });
+    }
+
+    try {
+        const [results] = await db.promise().query('SELECT get_students_count_by_course_with_rollup(?) AS total_students', [course_id]);
+        if (results.length > 0) {
+            res.json({ total_students: results[0].total_students });
+        } else {
+            res.status(404).json({ message: 'No data found for the given course ID.' });
+        }
+    } catch (error) {
+        console.error('Error fetching student count:', error);
+        res.status(500).json({ message: 'Internal server error.' });
+    }
+}
+
 module.exports = {
     enrollMultipleStudents,
     unenrollStudent,
     getAllEnrollments,
     getCoursesByStudentId,
+    getStudentCountByCourse,
 }
